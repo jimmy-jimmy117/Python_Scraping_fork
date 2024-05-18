@@ -17,7 +17,8 @@ driver.get("https://www.google.co.jp/")
 query = driver.find_element(by=By.NAME, value="q")
 
 # 検索文字列を入力
-query.send_keys("python")
+search_word = "ありがとう"
+query.send_keys(search_word)
 
 # 3秒待つ
 time.sleep(3)
@@ -30,7 +31,8 @@ button.click()
 time.sleep(3)
 
 # 検索結果ページのURLを取得
-search_results = driver.find_elements_by_css_selector("div.r a")
+search_results = driver.find_elements(By.TAG_NAME, value="a")
+# search_results = driver.find_elements_by_css_selector("div.r a")
 search_result_urls = [link.get_attribute("href") for link in search_results]
 
 # 検索結果の中からランダムに1つのページを選択し、そのページに移動
@@ -41,10 +43,13 @@ driver.get(selected_url)
 time.sleep(3)  # 3秒待つ（必要に応じて調整）
 
 # ページのテキストを取得
-page_text = driver.find_element_by_tag_name("body").text
+html = driver.page_source
+search_results = driver.find_elements(By.CSS_SELECTOR, "div.r a")
+soup = BeautifulSoup(html, "html.parser")
+text = soup.get_text()
 
 # 検索文字の出現回数をカウント
-word_count = page_text.count(search_word)
+word_count = text.count(search_word)
 
 # 結果を出力
 print(f"ページ '{selected_url}' における '{search_word}' の出現回数: {word_count}")
